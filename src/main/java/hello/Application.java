@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.ResourceBundle;
 
 import redis.clients.jedis.Jedis;
 
@@ -23,7 +24,9 @@ public class Application {
 	
 	
 	public String getRedisData(@RequestParam String empId) {
-		try (Jedis jedis = new Jedis("172.17.0.3", 6379, 5000)) {
+		ResourceBundle rb = ResourceBundle.getBundle("redis.properties");
+		String redisip = rb.getString("redisip");
+		try (Jedis jedis = new Jedis(redisip, 6379, 5000)) {
 			System.out.println("Connection successful");
 			System.out.println("Getting response from the server: " + jedis.get(empId));
 			String pingReply = jedis.get(empId);
@@ -37,7 +40,11 @@ public class Application {
 	
 	@PutMapping("/addEmployee")
 	public String putRedisData(@RequestParam String empId,@RequestParam String empName) {
-		try (Jedis jedis = new Jedis("172.17.0.3", 6379, 5000)) {
+		ResourceBundle rb = ResourceBundle.getBundle("redis.properties");
+		
+		String redisip = rb.getString("redisip");
+		
+		try (Jedis jedis = new Jedis(redisip, 6379, 5000)) {
 			System.out.println("Connection successful");
 			jedis.set(empId,empName);
 			String pingReply = jedis.ping();
